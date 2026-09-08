@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import AuroraBackdrop from "./AuroraBackdrop";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -9,6 +10,8 @@ type FullPageSectionProps = {
   backgroundColor: string;
   children: ReactNode;
   contentClassName?: string;
+  /** Renders the decorative aurora/grid backdrop behind the section. */
+  aurora?: boolean;
 };
 
 /* ------------------------------------------------------------------ */
@@ -20,6 +23,7 @@ export default function FullPageSection({
   backgroundColor,
   children,
   contentClassName = "",
+  aurora = false,
 }: FullPageSectionProps) {
   return (
     <section
@@ -27,7 +31,8 @@ export default function FullPageSection({
       className="relative w-full h-dvh min-h-dvh shrink-0 overflow-hidden"
       style={{ backgroundColor }}
     >
-      <div className="h-full overflow-y-auto overscroll-contain">
+      {aurora && <AuroraBackdrop />}
+      <div className="relative h-full overflow-y-auto overscroll-contain">
         <div
           className={`min-h-full flex items-center justify-center py-20 sm:py-24 ${contentClassName}`}
         >
