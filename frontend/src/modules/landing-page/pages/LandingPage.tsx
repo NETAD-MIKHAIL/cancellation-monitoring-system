@@ -23,6 +23,7 @@ import LandingPageLoader from "../components/LandingPageLoader";
 import AuroraBackdrop from "../components/AuroraBackdrop";
 import AnimatedStat from "../components/AnimatedStat";
 import { TextEffect } from "../../../components/TextEffect";
+import { AnimatedBackground } from "../../../components/AnimatedBackground";
 
 /* Default hero copy (kept in sync with the live landing page) used as a
    fallback until the Home section has been saved via the admin editor. */
@@ -814,32 +815,45 @@ export default function LandingPage() {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm">
-            {navItems.map((item, index) => {
-              const isActive = item.id !== "hero" && currentSection === index;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => navigateToSection(item.id)}
-                  aria-current={isActive ? "page" : undefined}
-                  className="relative py-2 font-medium transition-colors duration-200"
-                  style={{
-                    color: isActive ? "#2a5a5a" : currentSection > 0 ? "#4a4a4a" : "white",
-                    textShadow: currentSection > 0 ? "none" : "0 1px 3px rgba(0,0,0,0.3)",
-                  }}
-                >
-                  {item.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="active-landing-nav"
-                      className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full"
-                      style={{ backgroundColor: "#92C7CF" }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
-                    />
-                  )}
-                </button>
-              );
-            })}
+  <nav className="hidden md:flex items-center gap-1.5 text-sm">
+    <AnimatedBackground
+      defaultValue={navItems[0].id}
+      enableHover
+      className={`rounded-lg ${
+        currentSection > 0
+          ? "bg-[#E5E1DA]/80"
+          : "bg-white/10 backdrop-blur-sm"
+      }`}
+      transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
+    >
+      {navItems.map((item, index) => {
+        const isActive = item.id !== "hero" && currentSection === index;
+        return (
+          <button
+            key={item.id}
+            data-id={item.id}
+            type="button"
+            onClick={() => navigateToSection(item.id)}
+            aria-current={isActive ? "page" : undefined}
+            className="px-4 py-2 font-medium transition-colors duration-200"
+            style={{
+              color: isActive ? "#2a5a5a" : currentSection > 0 ? "#4a4a4a" : "white",
+              textShadow: currentSection > 0 ? "none" : "0 1px 3px rgba(0,0,0,0.3)",
+            }}
+          >
+            {item.label}
+            {isActive && (
+              <motion.span
+                layoutId="active-landing-nav"
+                className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full"
+                style={{ backgroundColor: "#92C7CF" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
+              />
+            )}
+          </button>
+        );
+      })}
+    </AnimatedBackground>
             <button
               onClick={() => requireAuth("/app/dashboard")}
               className="ml-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
