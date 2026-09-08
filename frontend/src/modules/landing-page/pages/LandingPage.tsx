@@ -22,6 +22,7 @@ import FullPageSection from "../components/FullPageSection";
 import LandingPageLoader from "../components/LandingPageLoader";
 import AuroraBackdrop from "../components/AuroraBackdrop";
 import AnimatedStat from "../components/AnimatedStat";
+import { TextEffect } from "../../../components/TextEffect";
 
 /* Default hero copy (kept in sync with the live landing page) used as a
    fallback until the Home section has been saved via the admin editor. */
@@ -1013,47 +1014,77 @@ export default function LandingPage() {
                 <span className="text-white/90">$ stl.hexaprime</span>
               </motion.span>
 
-              <motion.h1
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
-                animate={prefersReducedMotion
-                  ? { opacity: 1, y: 0 }
-                  : showHeroContent
+              {prefersReducedMotion || !showHeroContent ? (
+                <motion.h1
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
+                  animate={prefersReducedMotion
                     ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 30 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
-                  ease: [0.22, 1, 0.36, 1] as const,
-                  delay: showHeroContent && !prefersReducedMotion ? 0.55 : 0,
-                }}
-                className="mt-8 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
-                style={{ color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}
-              >
-                {heroTitle.split(/(Hexaprime)/).map((part, i) =>
-                  part === "Hexaprime" ? (
-                    <span key={i} style={{ color: "#AAD7D9" }}>{part}</span>
-                  ) : (
-                    <span key={i}>{part}</span>
-                  )
-                )}
-              </motion.h1>
+                    : showHeroContent
+                      ? { opacity: 1, y: 0 }
+                      : { opacity: 0, y: 30 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
+                    ease: [0.22, 1, 0.36, 1] as const,
+                    delay: showHeroContent && !prefersReducedMotion ? 0.55 : 0,
+                  }}
+                  className="mt-8 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
+                  style={{ color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}
+                >
+                  {heroTitle.split(/(Hexaprime)/).map((part, i) =>
+                    part === "Hexaprime" ? (
+                      <span key={i} style={{ color: "#AAD7D9" }}>{part}</span>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    )
+                  )}
+                </motion.h1>
+              ) : (
+                <TextEffect
+                  as="h1"
+                  preset="fade-in-blur"
+                  speedReveal={1.1}
+                  speedSegment={0.3}
+                  delay={0.35}
+                  className="mt-8 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
+                  style={{ color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}
+                  segmentStyle={(seg) =>
+                    seg === "Hexaprime" ? { color: "#AAD7D9" } : undefined
+                  }
+                >
+                  {heroTitle}
+                </TextEffect>
+              )}
 
-              <motion.p
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
-                animate={prefersReducedMotion
-                  ? { opacity: 1, y: 0 }
-                  : showHeroContent
+              {prefersReducedMotion || !showHeroContent ? (
+                <motion.p
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
+                  animate={prefersReducedMotion
                     ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 30 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
-                  ease: [0.22, 1, 0.36, 1] as const,
-                  delay: showHeroContent && !prefersReducedMotion ? 1.1 : 0,
-                }}
-                className="mt-5 text-base sm:text-lg leading-relaxed max-w-lg"
-                style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.2)" }}
-              >
-                {heroDescription}
-              </motion.p>
+                    : showHeroContent
+                      ? { opacity: 1, y: 0 }
+                      : { opacity: 0, y: 30 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
+                    ease: [0.22, 1, 0.36, 1] as const,
+                    delay: showHeroContent && !prefersReducedMotion ? 1.1 : 0,
+                  }}
+                  className="mt-5 text-base sm:text-lg leading-relaxed max-w-lg"
+                  style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.2)" }}
+                >
+                  {heroDescription}
+                </motion.p>
+              ) : (
+                <TextEffect
+                  preset="fade-in-blur"
+                  speedReveal={1.1}
+                  speedSegment={0.3}
+                  delay={0.9}
+                  className="mt-5 text-base sm:text-lg leading-relaxed max-w-lg"
+                  style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.2)" }}
+                >
+                  {heroDescription}
+                </TextEffect>
+              )}
 
               <motion.div
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
