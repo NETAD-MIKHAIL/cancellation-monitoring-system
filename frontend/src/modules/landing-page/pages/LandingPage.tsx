@@ -20,6 +20,10 @@ import { fetchLandingPageContent } from "../services/landingPage";
 import ScrollReveal from "../components/ScrollReveal";
 import FullPageSection from "../components/FullPageSection";
 import LandingPageLoader from "../components/LandingPageLoader";
+import AuroraBackdrop from "../components/AuroraBackdrop";
+import AnimatedStat from "../components/AnimatedStat";
+import { TextEffect } from "../../../components/TextEffect";
+import { AnimatedBackground } from "../../../components/AnimatedBackground";
 
 /* Default hero copy (kept in sync with the live landing page) used as a
    fallback until the Home section has been saved via the admin editor. */
@@ -811,32 +815,45 @@ export default function LandingPage() {
           </a>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm">
-            {navItems.map((item, index) => {
-              const isActive = item.id !== "hero" && currentSection === index;
-              return (
-                <button
-                  key={item.id}
-                  onClick={() => navigateToSection(item.id)}
-                  aria-current={isActive ? "page" : undefined}
-                  className="relative py-2 font-medium transition-colors duration-200"
-                  style={{
-                    color: isActive ? "#2a5a5a" : currentSection > 0 ? "#4a4a4a" : "white",
-                    textShadow: currentSection > 0 ? "none" : "0 1px 3px rgba(0,0,0,0.3)",
-                  }}
-                >
-                  {item.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="active-landing-nav"
-                      className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full"
-                      style={{ backgroundColor: "#92C7CF" }}
-                      transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
-                    />
-                  )}
-                </button>
-              );
-            })}
+  <nav className="hidden md:flex items-center gap-1.5 text-sm">
+    <AnimatedBackground
+      defaultValue={navItems[0].id}
+      enableHover
+      className={`rounded-lg ${
+        currentSection > 0
+          ? "bg-[#E5E1DA]/80"
+          : "bg-white/10 backdrop-blur-sm"
+      }`}
+      transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
+    >
+      {navItems.map((item, index) => {
+        const isActive = item.id !== "hero" && currentSection === index;
+        return (
+          <button
+            key={item.id}
+            data-id={item.id}
+            type="button"
+            onClick={() => navigateToSection(item.id)}
+            aria-current={isActive ? "page" : undefined}
+            className="px-4 py-2 font-medium transition-colors duration-200"
+            style={{
+              color: isActive ? "#2a5a5a" : currentSection > 0 ? "#4a4a4a" : "white",
+              textShadow: currentSection > 0 ? "none" : "0 1px 3px rgba(0,0,0,0.3)",
+            }}
+          >
+            {item.label}
+            {isActive && (
+              <motion.span
+                layoutId="active-landing-nav"
+                className="absolute inset-x-0 -bottom-0.5 h-0.5 rounded-full"
+                style={{ backgroundColor: "#92C7CF" }}
+                transition={{ duration: prefersReducedMotion ? 0 : 0.25 }}
+              />
+            )}
+          </button>
+        );
+      })}
+    </AnimatedBackground>
             <button
               onClick={() => requireAuth("/app/dashboard")}
               className="ml-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-all"
@@ -945,6 +962,9 @@ export default function LandingPage() {
           className="relative w-full h-dvh min-h-dvh shrink-0 flex items-center overflow-hidden"
           style={{ backgroundColor: "#E5E1DA" }}
         >
+          {/* Decorative aurora + grid backdrop */}
+          <AuroraBackdrop className="opacity-70" />
+
           {/* Background slideshow */}
           <div className="absolute inset-0">
             {heroMedia.map((src, i) => (
@@ -996,7 +1016,7 @@ export default function LandingPage() {
                   ease: [0.22, 1, 0.36, 1] as const,
                   delay: showHeroContent && !prefersReducedMotion ? 0.2 : 0,
                 }}
-                className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold tracking-wider border"
+                className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 font-mono text-xs tracking-wider"
                 style={{
                   backgroundColor: "rgba(251, 249, 241, 0.2)",
                   backdropFilter: "blur(8px)",
@@ -1005,50 +1025,80 @@ export default function LandingPage() {
                 }}
               >
                 <Shield className="h-3.5 w-3.5" style={{ color: "#AAD7D9" }} />
-                Small Town Lottery
+                <span className="text-white/90">$ stl.hexaprime</span>
               </motion.span>
 
-              <motion.h1
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
-                animate={prefersReducedMotion
-                  ? { opacity: 1, y: 0 }
-                  : showHeroContent
+              {prefersReducedMotion || !showHeroContent ? (
+                <motion.h1
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
+                  animate={prefersReducedMotion
                     ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 30 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
-                  ease: [0.22, 1, 0.36, 1] as const,
-                  delay: showHeroContent && !prefersReducedMotion ? 0.55 : 0,
-                }}
-                className="mt-8 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
-                style={{ color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}
-              >
-                {heroTitle.split(/(Hexaprime)/).map((part, i) =>
-                  part === "Hexaprime" ? (
-                    <span key={i} style={{ color: "#AAD7D9" }}>{part}</span>
-                  ) : (
-                    <span key={i}>{part}</span>
-                  )
-                )}
-              </motion.h1>
+                    : showHeroContent
+                      ? { opacity: 1, y: 0 }
+                      : { opacity: 0, y: 30 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
+                    ease: [0.22, 1, 0.36, 1] as const,
+                    delay: showHeroContent && !prefersReducedMotion ? 0.55 : 0,
+                  }}
+                  className="mt-8 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
+                  style={{ color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}
+                >
+                  {heroTitle.split(/(Hexaprime)/).map((part, i) =>
+                    part === "Hexaprime" ? (
+                      <span key={i} style={{ color: "#AAD7D9" }}>{part}</span>
+                    ) : (
+                      <span key={i}>{part}</span>
+                    )
+                  )}
+                </motion.h1>
+              ) : (
+                <TextEffect
+                  as="h1"
+                  preset="fade-in-blur"
+                  speedReveal={1.1}
+                  speedSegment={0.3}
+                  delay={0.35}
+                  className="mt-8 text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight"
+                  style={{ color: "white", textShadow: "0 2px 12px rgba(0,0,0,0.3)" }}
+                  segmentStyle={(seg) =>
+                    seg === "Hexaprime" ? { color: "#AAD7D9" } : undefined
+                  }
+                >
+                  {heroTitle}
+                </TextEffect>
+              )}
 
-              <motion.p
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
-                animate={prefersReducedMotion
-                  ? { opacity: 1, y: 0 }
-                  : showHeroContent
+              {prefersReducedMotion || !showHeroContent ? (
+                <motion.p
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
+                  animate={prefersReducedMotion
                     ? { opacity: 1, y: 0 }
-                    : { opacity: 0, y: 30 }}
-                transition={{
-                  duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
-                  ease: [0.22, 1, 0.36, 1] as const,
-                  delay: showHeroContent && !prefersReducedMotion ? 1.1 : 0,
-                }}
-                className="mt-5 text-base sm:text-lg leading-relaxed max-w-lg"
-                style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.2)" }}
-              >
-                {heroDescription}
-              </motion.p>
+                    : showHeroContent
+                      ? { opacity: 1, y: 0 }
+                      : { opacity: 0, y: 30 }}
+                  transition={{
+                    duration: prefersReducedMotion ? 0 : showHeroContent ? 1.2 : 0.3,
+                    ease: [0.22, 1, 0.36, 1] as const,
+                    delay: showHeroContent && !prefersReducedMotion ? 1.1 : 0,
+                  }}
+                  className="mt-5 text-base sm:text-lg leading-relaxed max-w-lg"
+                  style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.2)" }}
+                >
+                  {heroDescription}
+                </motion.p>
+              ) : (
+                <TextEffect
+                  preset="fade-in-blur"
+                  speedReveal={1.1}
+                  speedSegment={0.3}
+                  delay={0.9}
+                  className="mt-5 text-base sm:text-lg leading-relaxed max-w-lg"
+                  style={{ color: "rgba(255,255,255,0.85)", textShadow: "0 1px 6px rgba(0,0,0,0.2)" }}
+                >
+                  {heroDescription}
+                </TextEffect>
+              )}
 
               <motion.div
                 initial={prefersReducedMotion ? false : { opacity: 0, y: 30 }}
@@ -1144,10 +1194,10 @@ export default function LandingPage() {
             <div className="mx-auto w-[94vw] max-w-[1800px] px-4 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-2xl text-center">
                 <span
-                  className="text-xs font-semibold tracking-[0.2em] uppercase"
+                  className="font-mono text-xs font-semibold uppercase tracking-[0.2em]"
                   style={{ color: "#92C7CF" }}
                 >
-                  Stay Updated
+                  // Stay Updated
                 </span>
                 <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight text-gray-800">
                   Events & News
@@ -1276,15 +1326,16 @@ export default function LandingPage() {
         <FullPageSection
           id="results"
           backgroundColor="#E5E1DA"
+          aurora
         >
           <ScrollReveal direction="up">
             <div className="mx-auto max-w-7xl px-6 lg:px-8">
               <div className="mx-auto max-w-2xl text-center">
                 <span
-                  className="text-xs font-semibold tracking-[0.2em] uppercase"
+                  className="font-mono text-xs font-semibold uppercase tracking-[0.2em]"
                   style={{ color: "#92C7CF" }}
                 >
-                  Latest Draw
+                  // Latest Draw
                 </span>
                 <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight text-gray-800">
                   Today's Result
@@ -1433,15 +1484,16 @@ export default function LandingPage() {
           id="social-responsibility"
           backgroundColor="#FBF9F1"
           contentClassName="!pt-24 !pb-12"
+          aurora
         >
           <ScrollReveal direction="up">
             <div className="mx-auto max-w-[90rem] px-5 sm:px-6 lg:px-8">
               <div className="mx-auto max-w-2xl text-center">
                 <span
-                  className="text-xs font-semibold tracking-[0.2em] uppercase"
+                  className="font-mono text-xs font-semibold uppercase tracking-[0.2em]"
                   style={{ color: "#92C7CF" }}
                 >
-                  Our Impact
+                  // Our Impact
                 </span>
                 <h2 className="mt-3 text-3xl sm:text-4xl font-bold tracking-tight text-gray-800">
                   {socialTitle}
@@ -1458,7 +1510,7 @@ export default function LandingPage() {
                   return (
                     <ScrollReveal
                       key={`${item.title}-${index}`}
-                      direction={index % 2 === 0 ? "left" : "right"}
+                      direction="scale"
                       delay={index * 0.1}
                       className="h-full"
                     >
@@ -1528,7 +1580,7 @@ export default function LandingPage() {
                     }}
                   >
                     <p className="text-xl font-bold sm:text-2xl" style={{ color: "#92C7CF" }}>
-                      {stat.value}
+                      <AnimatedStat value={stat.value} />
                     </p>
                     <p className="mt-1 text-xs font-medium uppercase tracking-wide" style={{ color: "#6b6b6b" }}>
                       {stat.label}
@@ -1550,10 +1602,10 @@ export default function LandingPage() {
             <div className="mx-auto max-w-3xl text-center">
               <ScrollReveal direction="left">
                 <span
-                  className="text-xs font-semibold tracking-[0.2em] uppercase"
+                  className="font-mono text-xs font-semibold uppercase tracking-[0.2em]"
                   style={{ color: "#92C7CF" }}
                 >
-                  Who We Are
+                  // Who We Are
                 </span>
               </ScrollReveal>
               <ScrollReveal direction="left" delay={0.05}>
